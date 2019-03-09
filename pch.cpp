@@ -13,12 +13,14 @@ SimpletronData::SimpletronData(void) {
 
 void SimpletronData::setValue(unsigned int newInstruction){
 	if (newInstruction > 9999) {
-		memoryLocation = 10000;
-		std::cout << "Sentinel value detected... compiling program";
+		std::cout << "Invalid value, exiting program... (range is 0-9999)\n";
+		std::cin.get();
+		abort();
 	}
 	else {
 		instructionType = static_cast<unsigned int>(trunc(static_cast<double>(newInstruction) / 100.0));
 		memoryLocation = newInstruction - static_cast<unsigned int>(instructionType * 100.0);
+		//std::cout << "memloc is " << memoryLocation << "instruction type is " << instructionType << std::endl;
 	}
 }
 
@@ -33,7 +35,7 @@ const unsigned int SimpletronData::getInstType(void) {
 }
 
 const unsigned int SimpletronData::getRawData(void) {
-	return rawInstruction;
+	return getInstType()+getMemLoc();
 }
 
 void Simpletron::Run(bool newStatus) {
@@ -54,6 +56,7 @@ void Simpletron::Run(bool newStatus) {
 		std::cin.clear();
 		std::cin >> memBuffer;
 		if (memBuffer > 9999) {
+			std::cout << "Sentinel value detected... compiling program\n";
 			break;
 		}
 		else {
@@ -62,35 +65,34 @@ void Simpletron::Run(bool newStatus) {
 	}
 
 	for (unsigned int i = 0; i < memory.size() - 1; i++) {
-		std::cout << memory[i].getInstType() << std::endl;
+		//std::cout << memory[i].getInstType() << std::endl;
 		std::cin.clear();
 		switch (memory[i].getInstType()) {
 			case static_cast<unsigned int>(Operation::READ) :
 				std::cin.clear();
 				std::cin >> memBuffer;
-				std::cout << memBuffer << std::endl;
 				memory[memory[i].getMemLoc()].setValue(memBuffer);
-				std::cout << memory[memory[i].getMemLoc()].getRawData() << std::endl;
+				//std::cout << memory[memory[i].getMemLoc()].getRawData() << std::endl;
 				break;
 
 			case static_cast<unsigned int>(Operation::WRITE) :
-				std::cout << memory[memory[i].getMemLoc()].getRawData() << std::endl;
+				std::cout << memory[memory[i].getMemLoc()].getRawData() << std::endl; //not a debug cout, keep it! 
 				break;
 
 				case static_cast<unsigned int>(Operation::LOAD) :
-				std::cout << "memory location we pull data from: " << memory[i].getMemLoc() << std::endl;
+				//std::cout << "memory location we pull data from: " << memory[i].getMemLoc() << std::endl;
 				accumulator = memory[memory[i].getMemLoc()].getRawData();
-				std::cout << "accumulator loaded with " << accumulator << std::endl;
+				//std::cout << "accumulator loaded with " << accumulator << std::endl;
 				break;
 
 				case static_cast<unsigned int>(Operation::STORE) :
-				std::cout << "storing " << accumulator << " into memory loc " << memory[i].getMemLoc() << std::endl;
+				//std::cout << "storing " << accumulator << " into memory loc " << memory[i].getMemLoc() << std::endl;
 				memory[memory[i].getMemLoc()] = SimpletronData(accumulator);
 				break;
 
 			case static_cast<unsigned int>(Operation::ADD) :
 				accumulator += memory[memory[i].getMemLoc()].getRawData();
-				std::cout << "accumulator added value now " << accumulator << std::endl;
+				//std::cout << "accumulator added value now " << accumulator << std::endl;
 				break;
 
 			case static_cast<unsigned int>(Operation::SUBSTRACT) :
@@ -121,7 +123,9 @@ void Simpletron::Run(bool newStatus) {
 				}
 				break;
 
-			case static_cast<unsigned int>(Operation::HALT):
+			case static_cast<unsigned int>(Operation::HALT) :
+				std::cout << "Program complete. Press enter to exit...\n";
+				std::cin.get();
 				return;
 			default: 
 				std::cout << "Invalid code, please check entry..." << std::endl;

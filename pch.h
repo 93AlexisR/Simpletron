@@ -25,7 +25,6 @@ public:
 protected:
 
 private:
-	unsigned int rawInstruction{ 0 };
 	unsigned int memoryLocation{ 0 };
 	unsigned int instructionType{ 0 };
 };
