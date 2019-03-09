@@ -65,7 +65,7 @@ void Simpletron::Run(bool newStatus) {
 	}
 
 	for (unsigned int i = 0; i < memory.size() - 1; i++) {
-		//std::cout << memory[i].getInstType() << std::endl;
+		//std::cout << "New loop: " << i << "(instruction: " << memory[i].getInstType() << ") " << std::endl;
 		std::cin.clear();
 		switch (memory[i].getInstType()) {
 			case static_cast<unsigned int>(Operation::READ) :
@@ -88,6 +88,7 @@ void Simpletron::Run(bool newStatus) {
 				case static_cast<unsigned int>(Operation::STORE) :
 				//std::cout << "storing " << accumulator << " into memory loc " << memory[i].getMemLoc() << std::endl;
 				memory[memory[i].getMemLoc()] = SimpletronData(accumulator);
+				//accumulator = 0; //re-initializing after store operation
 				break;
 
 			case static_cast<unsigned int>(Operation::ADD) :
@@ -95,8 +96,8 @@ void Simpletron::Run(bool newStatus) {
 				//std::cout << "accumulator added value now " << accumulator << std::endl;
 				break;
 
-			case static_cast<unsigned int>(Operation::SUBSTRACT) :
-				accumulator = memory[memory[i].getMemLoc()].getRawData() - accumulator;
+				case static_cast<unsigned int>(Operation::SUBSTRACT) :
+				accumulator -= memory[memory[i].getMemLoc()].getRawData();
 				break;
 
 			case static_cast<unsigned int>(Operation::MULTIPLY) :
@@ -108,18 +109,20 @@ void Simpletron::Run(bool newStatus) {
 				break;
 
 			case static_cast<unsigned int>(Operation::BRANCH) :
-				i = memory[i].getMemLoc();
+				--i = memory[i].getMemLoc();
+				//std::cout << "branching out to " << memory[i].getMemLoc() << "\n";
 				break;
 
 			case static_cast<unsigned int>(Operation::BRANCHNEG):
 				if (accumulator < 0) {
-					i = memory[i].getMemLoc();
+					//std::cout << "branching out cause negative to " << memory[i].getMemLoc() << "\n";
+					--i = memory[i].getMemLoc();
 				}
 				break;
 
 			case static_cast<unsigned int>(Operation::BRANCHZERO):
 				if (accumulator == 0) {
-					i = memory[i].getMemLoc();
+					i = memory[i].getMemLoc() - 1;
 				}
 				break;
 
