@@ -66,6 +66,12 @@ public:
 
 };
 
-// TODO: add headers that you want to pre-compile here
+// TODO:
+// Done - Extend simpletron memory to contain 1000 memory locations
+// Allow the simulator to perform remainder calculations (modulus, extra instruction needed)
+// Allow simulator to perform exponentiation calculations (extra instruction needed)
+// Allow printing of a newline
+
+
 
 #endif //PCH_H
